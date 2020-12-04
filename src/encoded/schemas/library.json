@@ -67,18 +67,37 @@
             ]
         },
         "depleted_in_term_name": {
-            "not": {
-                "properties": {
-                    "depleted_in_term_name": {
-                        "items": {
-                            "enum": ["polyadenylated mRNA"]
+            "allOf": [
+                {
+                    "not": {
+                        "properties": {
+                            "depleted_in_term_name": {
+                                "items": {
+                                    "enum": ["polyadenylated mRNA"]
+                                }
+                            },
+                            "nucleic_acid_term_name": {
+                                "enum": ["polyadenylated mRNA"]
+                            }
                         }
-                    },
-                    "nucleic_acid_term_name": {
-                        "enum": ["polyadenylated mRNA"]
+                    }
+                },
+                {
+                    "not": {
+                        "properties": {
+                            "depleted_in_term_name": {
+                                "items": {
+                                    "enum": ["capped mRNA"]
+                                }
+                            },
+                            "nucleic_acid_term_name": {
+                                "enum": ["capped mRNA"]
+                            }
+                        }
                     }
                 }
-            }
+
+            ]
         },
         "linkers": {
             "oneOf": [
@@ -218,7 +237,8 @@
                 "miRNA",
                 "polyadenylated mRNA",
                 "protein",
-                "RNA"
+                "RNA",
+                "capped mRNA"
             ]
         },
         "dbxrefs": {

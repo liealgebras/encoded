@@ -3,6 +3,7 @@
 ### Minor changes sicne schema version 14
 
 * *linkers* property is added to specify the linker(s) used during ChIA-PET library preparation.
+* *capped mRNA* may now be specified in the property *nucleic_acid_term_name*, this cannot be submitted in combination with *capped mRNA* in *depleted_in_term_name*.
 
 ### Schema version 14
 
