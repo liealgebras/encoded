@@ -285,10 +285,9 @@ $navbar-bg-color:            #0a253d;
 
     .disabled-menu-item {
         pointer-events: none;
-        font-weight: 400;
+        font-weight: 300;
         position: relative;
         padding: 2px 30px 2px 20px;
-        font-weight: 400;
         letter-spacing: 1px;
         font-size: 0.9rem;
         @media screen and (min-width: $screen-md-min) {
@@ -318,7 +317,7 @@ $navbar-bg-color:            #0a253d;
                 border-left: none;
                 border-right: none;
                 text-align: left;
-                font-weight: 300;
+                font-weight: 400;
                 white-space: nowrap;
                 max-width: 400px;
                 position: relative;
