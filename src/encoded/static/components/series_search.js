@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import url from 'url';
-import { Panel, PanelBody } from '../libs/ui/panel';
+import { Panel, PanelBody, TabPanel } from '../libs/ui/panel';
 import { ResultTable } from './search';
 import QueryString from '../libs/query_string';
 import * as globals from './globals';
@@ -52,16 +52,16 @@ function getSeriesData(seriesLink, fetch) {
 const SeriesSearch = (props, context) => {
     const [parsedUrl, setParsedUrl] = React.useState(url.parse(props.context['@id']));
     const [query, setQuery] = React.useState(new QueryString(parsedUrl.query));
-    let originalSeries = 'OrganismDevelopmentSeries';
+    let selectedSeries = 'OrganismDevelopmentSeries';
     if (query.getKeyValues('type')[0]) {
-        originalSeries = query.getKeyValues('type')[0];
+        selectedSeries = query.getKeyValues('type')[0];
     }
-    const [selectedSeries, setSelectedSeries] = React.useState(originalSeries);
     const [descriptionData, setDescriptionData] = React.useState(null);
+    const [seriesTabs, setSeriesTabs] = React.useState({});
 
     const searchBase = url.parse(context.location_href).search || '';
 
-    const handleClick = React.useCallback((series) => {
+    const handleTabClick = React.useCallback((series) => {
         setParsedUrl(url.parse(props.context['@id']));
         setQuery(new QueryString(parsedUrl.query));
         query.deleteKeyValue('type');
@@ -85,6 +85,19 @@ const SeriesSearch = (props, context) => {
         return SeriesSearch.lastRegion;
     };
 
+    const buildTabs = React.useCallback(() => {
+        Object.keys(seriesList).forEach((s) => {
+            seriesTabs[s] =
+                <div className="tab-inner">
+                    <div className="tab-icon">
+                        <img src={`/static/img/series/${s.replace('Series', '')}.svg`} alt={s} />
+                    </div>
+                    {seriesList[s].title}
+                </div>;
+        });
+        return seriesTabs;
+    }, [seriesTabs]);
+
     // Select series from tab buttons
     React.useEffect(() => {
         const seriesDescriptionHref = `/profiles/${seriesList[selectedSeries].schema}.json`;
@@ -92,11 +105,15 @@ const SeriesSearch = (props, context) => {
             setDescriptionData(response.description);
         });
         if (!(query.getKeyValues('type')[0])) {
-            query.addKeyValue('type', originalSeries);
+            query.addKeyValue('type', selectedSeries);
             const href = `?${query.format()}`;
             context.navigate(href);
         }
-    }, [context, context.fetch, originalSeries, query, selectedSeries]);
+    }, [context, context.fetch, query, selectedSeries]);
+
+    React.useEffect(() => {
+        setSeriesTabs(buildTabs());
+    }, [buildTabs]);
 
     return (
         <div className="layout">
@@ -104,39 +121,30 @@ const SeriesSearch = (props, context) => {
                 <div className="ricktextblock block series-search" data-pos="0,0,0">
                     <h1>Functional genomics series</h1>
                     <div className="outer-tab-container">
-                        <div className="tab-container series-tabs">
-                            {Object.keys(seriesList).map(s => (
-                                <button
-                                    key={s}
-                                    className={`tab-button${selectedSeries === s ? ' selected' : ''}`}
-                                    onClick={() => handleClick(s)}
-                                >
-                                    <div className="tab-inner">
-                                        <div className="tab-icon">
-                                            <img src={`/static/img/series/${s.replace('Series', '')}.svg`} alt={s} />
-                                        </div>
-                                        {seriesList[s].title}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                        <div className="tab-border" />
-                    </div>
-                    <div className="tab-body">
-                        <div className="tab-description">{descriptionData}</div>
-                        <div className="series-wrapper">
-                            <Panel>
-                                <PanelBody>
-                                    <ResultTable
-                                        {...props}
-                                        searchBase={searchBase}
-                                        onChange={context.navigate}
-                                        currentRegion={currentRegion}
-                                        seriesFlag
-                                    />
-                                </PanelBody>
-                            </Panel>
-                        </div>
+                        <TabPanel
+                            tabs={seriesTabs}
+                            selectedTab={selectedSeries}
+                            handleTabClick={handleTabClick}
+                            tabCss="tab-button"
+                            tabPanelCss="tab-container series-tabs"
+                        >
+                            <div className="tab-body">
+                                <div className="tab-description">{descriptionData}</div>
+                                <div className="series-wrapper">
+                                    <Panel>
+                                        <PanelBody>
+                                            <ResultTable
+                                                {...props}
+                                                searchBase={searchBase}
+                                                onChange={context.navigate}
+                                                currentRegion={currentRegion}
+                                                hideDocType
+                                            />
+                                        </PanelBody>
+                                    </Panel>
+                                </div>
+                            </div>
+                        </TabPanel>
                     </div>
                 </div>
             </div>
