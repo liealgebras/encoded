@@ -67,8 +67,6 @@ $tab-color: #a8a8a8;
 }
 
 .tab-container, .tab-nav {
-    // display: flex;
-    // flex-wrap: wrap;
     background-color: white;
 }
 
@@ -191,6 +189,10 @@ $tab-color: #a8a8a8;
     }
     &:hover {
         background: #E2E2E2;
+    }
+    .disabled {
+        background: #efefef;
+        opacity: 0.3;
     }
     a {
         position: relative;

@@ -330,17 +330,41 @@ class SummaryBody extends React.Component {
         const searchQuery = url.parse(this.props.context['@id']).search;
         const terms = queryString.parse(searchQuery);
         this.state = {
-            selectedOrganism: terms[organismField] ? terms[organismField] : [],
+            selectedOrganism: terms[organismField] ? terms[organismField] : 'Homo sapiens',
         };
         this.chooseOrganism = this.chooseOrganism.bind(this);
+        this.getAvailableOrganisms = this.getAvailableOrganisms.bind(this);
+    }
+
+    componentDidMount() {
+        const parsedUrl = url.parse(this.props.context['@id']);
+        const query = new QueryString(parsedUrl.query);
+        if ((query.getKeyValues(organismField)).length === 0) {
+            query.addKeyValue(organismField, 'Homo sapiens');
+            const href = `?${query.format()}`;
+            this.context.navigate(href);
+        }
+    }
+
+    /**
+     * Get a list of organism scientific names that exist in the given matrix data.
+     * @return {array} Organisms in data; empty array if none
+     */
+    getAvailableOrganisms() {
+        const { context } = this.props;
+        const organismFacet = context.facets && context.facets.find(facet => facet.field === 'replicates.library.biosample.donor.organism.scientific_name');
+        if (organismFacet) {
+            return organismFacet.terms.map(term => term.key);
+        }
+        return [];
     }
 
     getOrganismTabs() {
         // We use "organisms" to determine if a tab should be disabled or not
-        // const organisms = this.getAvailableOrganisms();
+        const organisms = this.getAvailableOrganisms();
         const organismTabs = {};
         organismTerms.forEach((organismName) => {
-            organismTabs[organismName] = <div className={`organism-button ${organismName.replace(' ', '-')} ${this.initialSelectedTab === organismName ? 'active' : ''}`}><img src={`/static/img/bodyMap/organisms/${organismName.replace(' ', '-')}.svg`} alt={organismName} /><span>{organismName}</span></div>;
+            organismTabs[organismName] = <div className={`organism-button ${organismName.replace(' ', '-')} ${!(organisms.includes(organismName)) ? 'disabled' : ''}`}><img src={`/static/img/bodyMap/organisms/${organismName.replace(' ', '-')}.svg`} alt={organismName} /><span>{organismName}</span></div>;
         });
         return organismTabs;
     }
