@@ -118,7 +118,7 @@ const SeriesSearch = (props, context) => {
     return (
         <div className="layout">
             <div className="layout__block layout__block--100">
-                <div className="ricktextblock block series-search" data-pos="0,0,0">
+                <div className="richtextblock block series-search" data-pos="0,0,0">
                     <h1>Functional genomics series</h1>
                     <div className="outer-tab-container">
                         <TabPanel
