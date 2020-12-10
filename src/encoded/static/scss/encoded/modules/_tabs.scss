@@ -35,8 +35,7 @@ $tab-color: #a8a8a8;
             }
         }
 
-        a, a:focus {
-            display: block;
+        a {
             text-decoration: none;
             margin: 0;
             padding: 5px 10px;
@@ -83,8 +82,22 @@ $tab-color: #a8a8a8;
 .tab-container {
     &.body-map {
         .tab-button {
-            padding: 10px 20px;
+            padding: 0;
             flex: 0 1 auto;
+            &:hover:not(.active) {
+                background: #efefef;
+            }
+            a {
+                padding: 10px 20px;
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                cursor: default;
+                &:hover:not([disabled]):not(.active) {
+                    background: #E2E2E2;
+                    cursor: pointer;
+                }
+            }
         }
     }
 }
@@ -174,8 +187,15 @@ $tab-color: #a8a8a8;
     }
 }
 
-.nav-tabs li {
+.series-tabs .nav-tabs li, .epigenome-tabs .nav-tabs li, .cart__display-content .tab-nav .nav-tabs li {
     padding: 0;
+    a {
+        display: inline-block;
+    }
+}
+
+.nav-tabs li {
+    padding: 5px 10px;
     margin: 5px;
     border-radius: 3px;
     color: #000;
@@ -193,6 +213,10 @@ $tab-color: #a8a8a8;
     .disabled {
         background: #efefef;
         opacity: 0.3;
+        cursor: default;
+        &:hover {
+            background: #efefef;
+        }
     }
     a {
         position: relative;
