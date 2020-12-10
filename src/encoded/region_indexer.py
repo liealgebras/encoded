@@ -348,7 +348,11 @@ def index_regions(request):
     # keeping track of state
     state = RegionIndexerState(encoded_es,encoded_INDEX)
     result = state.get_initial_state()
-
+    primary_indexing_obj = state.get_obj("indexing")
+    print(primary_indexing_obj)
+    if not primary_indexing_obj or primary_indexing_obj.get('status') == 'uninitialized':
+        result['primary_indexing_status'] = primary_indexing_obj.get('status')
+        return result
     (uuids, force) = state.get_one_cycle(request)
     state.log_reindex_init_state()
     # Note: if reindex=all_uuids then maybe we should delete the entire index

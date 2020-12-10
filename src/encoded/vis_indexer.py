@@ -188,9 +188,12 @@ def index_vis(request):
 
     # keeping track of state
     state = VisIndexerState(es, INDEX)
-
     last_xmin = None
     result = state.get_initial_state()
+    primary_indexing_obj = state.get_obj("indexing")
+    if not primary_indexing_obj or primary_indexing_obj.get('status') == 'uninitialized':
+        result['primary_indexing_status'] = primary_indexing_obj.get('status')
+        return result
     last_xmin = result.get('xmin')
     next_xmin = None
     xmin = None  # will be at the beginning of the queue
