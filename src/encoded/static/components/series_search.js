@@ -50,8 +50,8 @@ function getSeriesData(seriesLink, fetch) {
 // The series search page displays a table of results corresponding to a selected series
 // Buttons for each series are displayed like tabs or links
 const SeriesSearch = (props, context) => {
-    const [parsedUrl, setParsedUrl] = React.useState(url.parse(props.context['@id']));
-    const [query, setQuery] = React.useState(new QueryString(parsedUrl.query));
+    const parsedUrl = url.parse(props.context['@id']);
+    const query = new QueryString(parsedUrl.query);
     let selectedSeries = 'OrganismDevelopmentSeries';
     if (query.getKeyValues('type')[0]) {
         selectedSeries = query.getKeyValues('type')[0];
@@ -62,18 +62,14 @@ const SeriesSearch = (props, context) => {
     const searchBase = url.parse(context.location_href).search || '';
 
     const handleTabClick = React.useCallback((series) => {
-        setParsedUrl(url.parse(props.context['@id']));
-        setQuery(new QueryString(parsedUrl.query));
-        query.deleteKeyValue('type');
-        query.addKeyValue('type', series);
-        const href = `?${query.format()}`;
+        const href = `/series-search/?type=${series}`;
         context.navigate(href);
         // Get series description from schema
         const seriesDescriptionHref = `/profiles/${seriesList[series].schema}.json`;
         getSeriesData(seriesDescriptionHref, context.fetch).then((response) => {
             setDescriptionData(response.description);
         });
-    }, [context, parsedUrl.query, props.context, query, setParsedUrl, setQuery]);
+    }, [context]);
 
     const currentRegion = (assembly, region) => {
         if (assembly && region) {
@@ -118,7 +114,7 @@ const SeriesSearch = (props, context) => {
     return (
         <div className="layout">
             <div className="layout__block layout__block--100">
-                <div className="richtextblock block series-search" data-pos="0,0,0">
+                <div className="block series-search" data-pos="0,0,0">
                     <h1>Functional genomics series</h1>
                     <div className="outer-tab-container">
                         <TabPanel
